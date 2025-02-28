@@ -14,6 +14,15 @@ if (!isset($_GET['preview']) || (isset($_GET['preview']) && $_GET['preview'] != 
     middleware(['guest']);
 }
 
+if (isset($_GET['account_role'])) {
+    session()->put('account_role', $_GET['account_role']);
+}
+
+if (isset($_GET['invitation_token'])) {
+    session()->put('account_role', 'partner');
+    session()->put('invitation_token', $_GET['invitation_token']);
+}
+
 name('auth.register');
 
 new class extends Component
@@ -118,6 +127,7 @@ new class extends Component
         $userData = [
             'email' => $this->email,
             'password' => Hash::make($this->password),
+            'type' => session()->get('account_role'),
         ];
 
         if ($this->settings->registration_include_name_field) {
@@ -151,7 +161,7 @@ new class extends Component
     @volt('auth.register')
     <x-auth::elements.container>
 
-        <x-auth::elements.heading :text="($language->register->headline ?? 'No Heading')" :description="($language->register->subheadline ?? 'No Description')" :show_subheadline="($language->register->show_subheadline ?? false)" />
+        <x-auth::elements.heading :text="($language->register->headline ?? 'No Heading')" :description="($language->register->subheadline ?? 'No Description')" :show_subheadline="true" />
         <x-auth::elements.session-message />
 
         @if(config('devdojo.auth.settings.social_providers_location') == 'top')

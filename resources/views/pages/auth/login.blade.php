@@ -80,6 +80,10 @@ new class extends Component
                 return;
             }
 
+            if ($userTryingToValidate && !empty($userTryingToValidate->type)) {
+                session()->put('account_role', $userTryingToValidate->type);
+            }
+
             $this->showPasswordField = true;
             $this->js("setTimeout(function(){ window.dispatchEvent(new CustomEvent('focus-password', {})); }, 10);");
             return;
@@ -140,7 +144,7 @@ new class extends Component
             <x-auth::elements.heading
                 :text="($language->login->headline ?? 'No Heading')"
                 :description="($language->login->subheadline ?? 'No Description')"
-                :show_subheadline="($language->login->show_subheadline ?? false)" />
+                :show_subheadline="false" />
 
             <x-auth::elements.session-message />
 
@@ -193,9 +197,14 @@ new class extends Component
 
 
             @if(config('devdojo.auth.settings.registration_enabled', true))
-                <div class="mt-3 space-x-0.5 text-sm leading-5 @if(config('devdojo.auth.settings.center_align_text')){{ 'text-center' }}@else{{ 'text-left' }}@endif" style="color:{{ config('devdojo.auth.appearance.color.text') }}">
-                    <span class="opacity-[47%]"> {{ config('devdojo.auth.language.login.dont_have_an_account') }} </span>
-                    <x-auth::elements.text-link data-auth="register-link" href="{{ route('auth.register') }}">{{ config('devdojo.auth.language.login.sign_up') }}</x-auth::elements.text-link>
+                <div class="flex flex-col justify-center items-center">
+                    <div class="mt-3 space-x-0.5 text-sm leading-5 @if(config('devdojo.auth.settings.center_align_text')){{ 'text-center' }}@else{{ 'text-left' }}@endif" style="color:{{ config('devdojo.auth.appearance.color.text') }}">
+                        {{-- <span class="opacity-[47%]"> {{ config('devdojo.auth.language.login.dont_have_an_account') }} </span> --}}
+                        <x-auth::elements.text-link data-auth="register-link" href="{{ route('auth.register', ['account_role' => 'rental']) }}">{{ config('devdojo.auth.language.login.sign_up') }}</x-auth::elements.text-link>
+                    </div>
+                    <div class="mt-3 space-x-0.5 text-sm leading-5 @if(config('devdojo.auth.settings.center_align_text')){{ 'text-center' }}@else{{ 'text-left' }}@endif" style="color:{{ config('devdojo.auth.appearance.color.text') }}">
+                        <x-auth::elements.text-link data-auth="register-link" href="{{ route('auth.register', ['account_role' => 'customer']) }}">{{ config('devdojo.auth.language.login.sign_up_as_customer') }}</x-auth::elements.text-link>
+                    </div>
                 </div>
             @endif
 

@@ -34,7 +34,14 @@
          />
     </div>
     <h1 id="auth-heading-title" class="mt-1 text-xl font-medium leading-9">{{ $text ?? '' }}</h1>
-    @if(($description ?? false) && $show_subheadline)
-        <p id="auth-heading-description" class="mb-1.5 space-x-0.5 text-sm leading-5 text-center opacity-[67%]">{{ $description ?? '' }}</p>
+    @if($show_subheadline)
+        <p id="auth-heading-description" class="mb-1.5 space-x-0.5 text-sm leading-5 text-center opacity-[67%]">{{ 
+            session()->has('account_role') && session()->get('account_role') == 'customer' ? 
+                config('devdojo.auth.language.login.as_customer') : 
+                (session()->has('account_role') && session()->get('account_role') == 'partner' ? 
+                    config('devdojo.auth.language.login.as_partner') : 
+                    config('devdojo.auth.language.login.as_rental')
+                )
+        }}</p>
     @endif
 </div>
